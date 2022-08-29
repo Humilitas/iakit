@@ -1,9 +1,9 @@
 const path = require('path')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const package = require('./package.json')
+const packagee = require('./package.json')
 
-const banner = `${package.name}.js v${package.version}
+const banner = `${packagee.name}.js v${packagee.version}
 (c) 2016-${(new Date()).getFullYear()} xiaoyann<0x0886@gmail.com>
 Released under the MIT License.`
 
@@ -13,7 +13,7 @@ const config = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',
-    library: package.name,
+    library: packagee.name,
     libraryTarget: 'umd'
   },
 
@@ -38,7 +38,7 @@ const config = {
 
   plugins: [
     new webpack.DefinePlugin({
-      'global_version': JSON.stringify(package.version)
+      'global_version': JSON.stringify(packagee.version)
     }),
     new webpack.optimize.UglifyJsPlugin(),
     new ExtractTextPlugin('style.css'),
@@ -48,6 +48,7 @@ const config = {
 
 webpack(config, (err, stats) => {
   if (err) throw err
+  // eslint-disable-next-line no-console
   console.log(stats.toString({
     colors: true,
     chunks: false,
