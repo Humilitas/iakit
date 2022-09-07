@@ -9,26 +9,26 @@ const config = {
 // 按钮被点击时需要执行的函数，通过数组的索引与按钮的ID关联
 const ATTR_BTNIDX_NAME = 'btn-idx'
 
-function renderTitle (text) {
+function renderTitle(text) {
   let node = document.createElement('h3')
   node.innerHTML = text
   utils.addClass(node, 'alert-title')
   return node
 }
 
-function renderContent (text) {
+function renderContent(text) {
   let node = document.createElement('div')
   node.innerHTML = text
   utils.addClass(node, 'alert-content')
   return node
 }
 
-function renderButtons (options, handlers) {
+function renderButtons(options, handlers, wholeRow) {
   let buttons = processOptions(options)
   let wrapper = document.createElement('div')
 
   utils.addClass(wrapper, 'alert-btns')
-  if (buttons.length === 2) {
+  if (buttons.length === 2 && !wholeRow) {
     utils.addClass(wrapper, 'alert-separate')
   }
 
@@ -50,7 +50,7 @@ function renderButtons (options, handlers) {
  *   { text: '', onClick: () => {} }
  * ]
  */
-function processOptions (options) {
+function processOptions(options) {
   const type = utils.getType(options)
   if (type === 'function') {
     return [{
@@ -61,7 +61,7 @@ function processOptions (options) {
   if (type === 'array') {
     return options
   }
-  return [{ text: config.btnText }]
+  return [{text: config.btnText}]
 }
 
 class Alert {
@@ -106,7 +106,7 @@ class Alert {
     this.handlers = []
   }
 
-  render(title, message, buttons) {
+  render(title, message, buttons, wholeRow) {
     let messageType = utils.getType(message)
 
     // alert('message')
@@ -127,7 +127,7 @@ class Alert {
 
     this.$el.appendChild(renderTitle(title))
     this.$el.appendChild(renderContent(message))
-    this.$el.appendChild(renderButtons(buttons, this.handlers))
+    this.$el.appendChild(renderButtons(buttons, this.handlers, wholeRow))
 
     this.show()
   }
@@ -137,13 +137,13 @@ const alertTasks = []
 let instance = null
 
 const destroy = Alert.prototype.destroy
-Alert.prototype.destroy = function() {
+Alert.prototype.destroy = function () {
   destroy.call(this)
   instance = null
   exec()
 }
 
-function exec () {
+function exec() {
   setTimeout(() => {
     if (!instance && alertTasks.length > 0) {
       let args = alertTasks.shift()
@@ -164,12 +164,12 @@ function exec () {
  *     ]
  *   )
  */
-export function alert(title, message, buttons) {
+export function alert(title, message, buttons, wholeRow) {
   alertTasks.push(arguments)
   exec()
 }
 
-alert.config = function(options) {
+alert.config = function (options) {
   Object.keys(config).forEach((key) => {
     if (typeof options[key] !== 'undefined') {
       config[key] = options[key]
